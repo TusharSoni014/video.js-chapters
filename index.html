@@ -123,6 +123,12 @@
           } else if (event.code === "ArrowLeft") {
             event.preventDefault();
             player.currentTime(player.currentTime() - 10);
+          } else if (event.code === "KeyF") {
+            if (player.isFullscreen()) {
+              player.exitFullscreen();
+            } else {
+              player.requestFullscreen();
+            }
           }
         });
         var totalDuration = player.duration();
