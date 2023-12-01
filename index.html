@@ -51,19 +51,19 @@
       var chapters = [
         {
           timeStamp: 30,
-          title: "haha one",
+          title: "chater 1",
         },
         {
           timeStamp: 60,
-          title: "hehe chapter 2",
+          title: "chapter 2",
         },
         {
           timeStamp: 120,
-          title: "arey wahh chapter 3",
+          title: "chapter 3",
         },
         {
           timeStamp: 190,
-          title: "this is working 4!",
+          title: "chapter 4",
         },
       ];
       var chaptersContainer = document.querySelector(".chapters-container");
@@ -92,7 +92,6 @@
               overrideNative: true,
             },
           },
-          muted: true,
         },
         function () {
           var player = this;
@@ -142,9 +141,7 @@
         seekbarParent.addEventListener("mouseleave", function () {
           seekbar.style.height = "5px";
         });
-        let shouldUpdateTitle = true;
         const seekbarWidth = seekbar.offsetWidth;
-
         chapters.map((chapter, index) => {
           const isLastElement = index === chapters.length - 1;
           const chapterElement = document.createElement("div");
