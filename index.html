@@ -39,6 +39,9 @@
       position: absolute;
       height: 100%;
     }
+    .vjs-play-progress{
+      z-index: 999;
+    }
   </style>
   <body>
     <div style="margin: 50px auto">
@@ -135,7 +138,6 @@
         const chapterTitle = document.querySelector(
           ".vjs-control-bar .vjs-progress-control .vjs-progress-holder .vjs-mouse-display"
         );
-
         seekbarParent.addEventListener("mouseenter", function () {
           seekbar.style.height = "10px";
         });
@@ -171,6 +173,10 @@
           }
           chapterElement.addEventListener("mouseenter", function () {
             chapterTitle.innerText = chapters[index].title;
+            chapterElement.style.backgroundColor = "darkred";
+          });
+          chapterElement.addEventListener("mouseleave", function () {
+            chapterElement.style.backgroundColor = "transparent";
           });
           chapterElement.style.left = left;
           seekbar.appendChild(chapterElement);
