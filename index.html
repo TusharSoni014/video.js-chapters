@@ -68,6 +68,7 @@
       ];
       var chaptersContainer = document.querySelector(".chapters-container");
 
+      //populating the chapters buttons in the ui to jump to perticular chapters.
       chapters.map((chapter, index) => {
         var button = document.createElement("button");
         button.textContent = chapter.title;
@@ -115,15 +116,19 @@
       player.on("loadedmetadata", function () {
         document.addEventListener("keydown", function (event) {
           if (event.code === "Space") {
-            event.preventDefault(); // Prevent default spacebar behavior (scrolling the page)
+            //adding a keyboard shortcut, Space to pasue/play video
+            event.preventDefault();
             player.paused() ? player.play() : player.pause();
           } else if (event.code === "ArrowRight") {
+            //adding a keyboard shortcut, seek video 10 seconds forward
             event.preventDefault();
             player.currentTime(player.currentTime() + 10);
           } else if (event.code === "ArrowLeft") {
+            //adding a keyboard shortcut, seek video 10 seconds backwards
             event.preventDefault();
             player.currentTime(player.currentTime() - 10);
           } else if (event.code === "KeyF") {
+            //adding a keyboard shortcut, toggle fullscreen on/off
             if (player.isFullscreen()) {
               player.exitFullscreen();
             } else {
@@ -147,7 +152,8 @@
         seekbarParent.addEventListener("mouseleave", function () {
           seekbar.style.height = "5px";
         });
-        const seekbarWidth = seekbar.offsetWidth;
+
+        //dividing the seekbar into chapter segments
         chapters.map((chapter, index) => {
           const isLastElement = index === chapters.length - 1;
           const chapterElement = document.createElement("div");
