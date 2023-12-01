@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/video.js/7.11.7/video-js.min.css"
+      rel="stylesheet"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/video.js/7.11.7/video.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/videojs-contrib-eme@3.8.0/dist/videojs-contrib-eme.js"></script>
+    <title>Test VideJS DRM</title>
+  </head>
+  <style>
+    .vjs-play-progress::before {
+      display: none !important;
+    }
+    .vjs-control-bar
+      .vjs-progress-control
+      .vjs-progress-holder
+      .vjs-play-progress {
+      background-color: red;
+    }
+    .vjs-control-bar .vjs-progress-control .vjs-progress-holder {
+      position: relative;
+    }
+    .vjs-mouse-display {
+      bottom: 20px;
+      background-color: rgba(0, 0, 0, 0.5) !important;
+      width: fit-content !important;
+      padding: 5px;
+      border-radius: 5px;
+      height: fit-content !important ;
+    }
+    .chapter {
+      border-right: 3px solid red;
+      width: fit-content;
+      position: absolute;
+      height: 100%;
+    }
+  </style>
+  <body>
+    <div style="margin: 50px auto">
+      <video id="my-video" class="video-js"></video>
+    </div>
+    <h1>Chapters:</h1>
+    <div class="chapters-container"></div>
+    <script>
+      var chapters = [
+        {
+          timeStamp: 30,
+          title: "haha one",
+        },
+        {
+          timeStamp: 60,
+          title: "hehe chapter 2",
+        },
+        {
+          timeStamp: 120,
+          title: "arey wahh chapter 3",
+        },
+        {
+          timeStamp: 190,
+          title: "this is working 4!",
+        },
+      ];
+      var chaptersContainer = document.querySelector(".chapters-container");
+
+      chapters.map((chapter, index) => {
+        var button = document.createElement("button");
+        button.textContent = chapter.title;
+        button.addEventListener("click", function () {
+          if (index > 0) {
+            player.currentTime(chapters[index - 1].timeStamp);
+          } else {
+            player.currentTime(0);
+          }
+          player.play();
+        });
+        chaptersContainer.appendChild(button);
+      });
+
+      var player = videojs(
+        "my-video",
+        {
+          controls: true,
+          fluid: true,
+          html5: {
+            vhs: {
+              overrideNative: true,
+            },
+          },
+          muted: true,
+        },
+        function () {
+          var player = this;
+          player.eme();
+          player.src({
+            src: "https://cdn.bitmovin.com/content/assets/art-of-motion_drm/mpds/11331.mpd",
+            type: "application/dash+xml",
+            keySystems: {
+              "com.widevine.alpha":
+                "https://cwip-shaka-proxy.appspot.com/no_auth",
+            },
+          });
+
+          player.ready(function () {
+            player.tech(true).on("keystatuschange", function (event) {
+              console.log("event: ", event);
+            });
+          });
+        }
+      );
+      player.on("loadedmetadata", function () {
+        document.addEventListener("keydown", function (event) {
+          if (event.code === "Space") {
+            event.preventDefault(); // Prevent default spacebar behavior (scrolling the page)
+            player.paused() ? player.play() : player.pause();
+          } else if (event.code === "ArrowRight") {
+            event.preventDefault();
+            player.currentTime(player.currentTime() + 10);
+          } else if (event.code === "ArrowLeft") {
+            event.preventDefault();
+            player.currentTime(player.currentTime() - 10);
+          }
+        });
+        var totalDuration = player.duration();
+        const seekbarParent = document.querySelector(
+          ".vjs-control-bar .vjs-progress-control"
+        );
+        const seekbar = document.querySelector(
+          ".vjs-control-bar .vjs-progress-control .vjs-progress-holder"
+        );
+        const chapterTitle = document.querySelector(
+          ".vjs-control-bar .vjs-progress-control .vjs-progress-holder .vjs-mouse-display"
+        );
+
+        seekbarParent.addEventListener("mouseenter", function () {
+          seekbar.style.height = "10px";
+        });
+        seekbarParent.addEventListener("mouseleave", function () {
+          seekbar.style.height = "5px";
+        });
+        let shouldUpdateTitle = true;
+        const seekbarWidth = seekbar.offsetWidth;
+
+        chapters.map((chapter, index) => {
+          const isLastElement = index === chapters.length - 1;
+          const chapterElement = document.createElement("div");
+          chapterElement.className = "chapter";
+          if (index > 0) {
+            chapterElement.style.width = `${
+              (chapters[index].timeStamp * 100) / totalDuration -
+              (chapters[index - 1].timeStamp * 100) / totalDuration
+            }%`;
+            var left = `${
+              (chapters[index - 1].timeStamp * 100) / totalDuration
+            }%`;
+            if (isLastElement) {
+              chapterElement.style.borderRight = "none";
+              chapterElement.style.width = `calc(100% - ${
+                (chapters[index - 1].timeStamp * 100) / totalDuration
+              }%)`;
+            }
+          } else {
+            chapterElement.style.width = `${
+              (chapters[index].timeStamp * 100) / totalDuration
+            }%`;
+            var left = "0%";
+          }
+          chapterElement.addEventListener("mouseenter", function () {
+            chapterTitle.innerText = chapters[index].title;
+          });
+          chapterElement.style.left = left;
+          seekbar.appendChild(chapterElement);
+        });
+      });
+    </script>
+  </body>
+</html>
