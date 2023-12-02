@@ -13,9 +13,13 @@
     <title>Test VideJS DRM</title>
   </head>
   <style>
+    #my-video {
+      position: relative;
+    }
     .vjs-play-progress::before {
       content: "" !important;
-      border: 2px solid white;
+      background-color: white;
+      width: 5px;
       height: 100% !important;
       top: 0px !important;
       right: 0 !important;
@@ -43,6 +47,90 @@
       position: absolute;
       height: 100%;
       transition-duration: 0.2s;
+    }
+    .pause-play {
+      position: absolute;
+      background-color: rgba(0, 0, 0, 0.4);
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0.9);
+      transition-duration: 0.2s;
+      border-radius: 50%;
+      width: 20%;
+      aspect-ratio: 1/1;
+      pointer-events: none;
+      transform-origin: center center;
+      opacity: 0;
+    }
+    .pause-play::before {
+      content: "";
+      position: absolute;
+      width: 0;
+      height: 0;
+      border-style: solid;
+      border-width: 20px 0 20px 30px;
+      border-color: transparent transparent transparent rgba(255, 255, 255, 0.5);
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+    .pause-play-toggle {
+      transform: translate(-50%, -50%) scale(1);
+      opacity: 1;
+    }
+    .forward-seek {
+      position: absolute;
+      right: 0;
+      top: 50%;
+      width: 15%;
+      border-radius: 50%;
+      aspect-ratio: 1/1;
+      background-color: rgba(0, 0, 0, 0.4);
+      transform: translate(-50%, -50%) scale(0.9);
+      transition-duration: 0.2s;
+      opacity: 0;
+    }
+    .forward-seek::before {
+      content: ">>";
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      top: 50%;
+      left: 50%;
+      font-size: 20px;
+      transform: translate(-50%, -50%);
+    }
+    .forward-seek-active {
+      transform: translate(-30%, -50%) scale(1);
+      opacity: 1;
+    }
+    .backward-seek {
+      position: absolute;
+      left: 0;
+      top: 50%;
+      width: 15%;
+      border-radius: 50%;
+      aspect-ratio: 1/1;
+      background-color: rgba(0, 0, 0, 0.4);
+      transform: translate(50%, -50%) scale(0.9);
+      transition-duration: 0.2s;
+      opacity: 0;
+    }
+    .backward-seek::before {
+      content: "<<";
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      top: 50%;
+      right: 50%;
+      font-size: 20px;
+      transform: translate(50%, -50%);
+    }
+    .backward-seek-active {
+      transform: translate(30%, -50%) scale(1);
+      opacity: 1;
     }
   </style>
   <body>
@@ -116,24 +204,65 @@
 
           player.ready(function () {
             player.tech(true).on("keystatuschange", function (event) {
-              console.log("event: ", event);
+              // console.log("event: ", event);
             });
           });
         }
       );
       player.on("loadedmetadata", function () {
+        //selecting video element
+        const videoContainer = document.querySelector("#my-video");
+
+        //creating pause/play element
+        const pausePlayElement = document.createElement("div");
+        pausePlayElement.className = "pause-play";
+
+        //creating forward seek element
+        const forwardSeek = document.createElement("div");
+        forwardSeek.className = "forward-seek";
+
+        //creating forward seek element
+        const backwardSeek = document.createElement("div");
+        backwardSeek.className = "backward-seek";
+
+        videoContainer.appendChild(pausePlayElement);
+        videoContainer.appendChild(forwardSeek);
+        videoContainer.appendChild(backwardSeek);
+
+        player.on("play", function () {
+          pausePlayElement.classList.remove("pause-play-toggle");
+        });
+
+        player.on("pause", function () {
+          pausePlayElement.classList.add("pause-play-toggle");
+        });
+
         document.addEventListener("keydown", function (event) {
           if (event.code === "Space") {
             //adding a keyboard shortcut, Space to pasue/play video
             event.preventDefault();
-            player.paused() ? player.play() : player.pause();
+            if (player.paused()) {
+              player.play();
+            } else {
+              player.pause();
+              // pausePlayElement.classList.add("pause-play-toggle");
+              console.log(pausePlayElement);
+            }
           } else if (event.code === "ArrowRight") {
             //adding a keyboard shortcut, seek video 10 seconds forward
             event.preventDefault();
+            forwardSeek.classList.add("forward-seek-active");
+            setTimeout(() => {
+              forwardSeek.classList.remove("forward-seek-active");
+            }, 200);
             player.currentTime(player.currentTime() + 10);
           } else if (event.code === "ArrowLeft") {
             //adding a keyboard shortcut, seek video 10 seconds backwards
             event.preventDefault();
+            backwardSeek.classList.add("backward-seek-active");
+            setTimeout(() => {
+              backwardSeek.classList.remove("backward-seek-active");
+            }, 200);
             player.currentTime(player.currentTime() - 10);
           } else if (event.code === "KeyF") {
             //adding a keyboard shortcut, toggle fullscreen on/off
