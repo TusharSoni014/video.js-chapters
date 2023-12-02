@@ -6,7 +6,7 @@ I added A YouTube like seekbar chapters, when you hover over it, the current pla
 
 # What do you need to show chapters?
 Only a array of chapters along with timestamps are needed like this.
-```
+```javascript
       var chapters = [
         {
           timeStamp: 30,
