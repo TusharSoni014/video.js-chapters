@@ -34,12 +34,13 @@
       position: relative;
     }
     .vjs-mouse-display {
-      bottom: 20px;
+      bottom: 30px;
       background-color: rgba(0, 0, 0, 0.5) !important;
       width: fit-content !important;
       padding: 5px;
       border-radius: 5px;
       height: fit-content !important ;
+      transform: translateX(-50%);
     }
     .chapter {
       border-right: 3px solid black;
@@ -289,7 +290,7 @@
           ".vjs-control-bar .vjs-progress-control .vjs-progress-holder .vjs-mouse-display"
         );
         seekbarParent.addEventListener("mouseenter", function () {
-          seekbar.style.height = "10px";
+          seekbar.style.height = "70%";
         });
         seekbarParent.addEventListener("mouseleave", function () {
           seekbar.style.height = "5px";
