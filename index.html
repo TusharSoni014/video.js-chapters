@@ -164,21 +164,6 @@
       ];
       var chaptersContainer = document.querySelector(".chapters-container");
 
-      //populating the chapters buttons in the ui to jump to perticular chapters.
-      chapters.map((chapter, index) => {
-        var button = document.createElement("button");
-        button.textContent = chapter.title;
-        button.addEventListener("click", function () {
-          if (index > 0) {
-            player.currentTime(chapters[index - 1].timeStamp);
-          } else {
-            player.currentTime(0);
-          }
-          player.play();
-        });
-        chaptersContainer.appendChild(button);
-      });
-
       var player = videojs(
         "my-video",
         {
@@ -209,6 +194,27 @@
           });
         }
       );
+
+      //scrollToSegment function
+      const scrollToSegment = (index) => {
+        if (index > 0) {
+          player.currentTime(chapters[index - 1].timeStamp);
+        } else {
+          player.currentTime(0);
+        }
+        player.play();
+      };
+
+      //populating the chapters buttons in the ui to jump to perticular chapters.
+      chapters.map((chapter, index) => {
+        var button = document.createElement("button");
+        button.textContent = chapter.title;
+        button.addEventListener("click", function () {
+          scrollToSegment(index);
+        });
+        chaptersContainer.appendChild(button);
+      });
+
       player.on("loadedmetadata", function () {
         //selecting video element
         const videoContainer = document.querySelector("#my-video");
@@ -245,7 +251,6 @@
               player.play();
             } else {
               player.pause();
-              // pausePlayElement.classList.add("pause-play-toggle");
               console.log(pausePlayElement);
             }
           } else if (event.code === "ArrowRight") {
