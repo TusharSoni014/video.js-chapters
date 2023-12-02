@@ -14,7 +14,11 @@
   </head>
   <style>
     .vjs-play-progress::before {
-      display: none !important;
+      content: "" !important;
+      border: 2px solid white;
+      height: 100% !important;
+      top: 0px !important;
+      right: 0 !important;
     }
     .vjs-control-bar
       .vjs-progress-control
@@ -64,6 +68,10 @@
         {
           timeStamp: 190,
           title: "chapter 4",
+        },
+        {
+          timeStamp: 220,
+          title: "chapter 5",
         },
       ];
       var chaptersContainer = document.querySelector(".chapters-container");
