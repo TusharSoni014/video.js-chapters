@@ -13,6 +13,10 @@
     <title>Test VideJS DRM</title>
   </head>
   <style>
+    body {
+      background-color: black;
+      color: white;
+    }
     #my-video {
       position: relative;
     }
@@ -48,6 +52,22 @@
       position: absolute;
       height: 100%;
       transition-duration: 0.2s;
+    }
+    .chapters-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 10px;
+    }
+    .chapter-seek-btn {
+      padding: 10px 20px;
+      border: none;
+      background-color: #28313d;
+      color: white;
+      transition-duration: 0.2s;
+      cursor: pointer;
+    }
+    .chapter-seek-btn:hover {
+      scale: 1.05;
     }
     .pause-play {
       position: absolute;
@@ -133,6 +153,11 @@
       transform: translate(30%, -50%) scale(1);
       opacity: 1;
     }
+    .vjs-big-play-button{
+      left: 50% !important;
+      transform: translate(-50%, -50%);
+      top: 50% !important;
+    }
   </style>
   <body>
     <div style="margin: 50px auto">
@@ -155,12 +180,16 @@
           title: "chapter 3",
         },
         {
-          timeStamp: 190,
+          timeStamp: 160,
           title: "chapter 4",
         },
         {
-          timeStamp: 220,
+          timeStamp: 190,
           title: "chapter 5",
+        },
+        {
+          timeStamp: 220,
+          title: "chapter 6",
         },
       ];
       var chaptersContainer = document.querySelector(".chapters-container");
@@ -209,6 +238,7 @@
       //populating the chapters buttons in the ui to jump to perticular chapters.
       chapters.map((chapter, index) => {
         var button = document.createElement("button");
+        button.className = "chapter-seek-btn";
         button.textContent = chapter.title;
         button.addEventListener("click", function () {
           scrollToSegment(index);
